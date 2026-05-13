@@ -1,0 +1,30 @@
+﻿services:
+  mcp-server:
+    build: .
+    ports:
+      - '8000:8000'
+    networks:
+      - lab-network
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+
+  dvwa:
+    image: vulnerables/web-dvwa
+    ports:
+      - '8080:80'
+    networks:
+      - lab-network
+    restart: unless-stopped
+
+networks:
+  lab-network:
+    driver: bridge

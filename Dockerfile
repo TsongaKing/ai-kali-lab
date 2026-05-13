@@ -1,0 +1,26 @@
+﻿FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt update && apt install -y \
+    python3 \
+    python3-pip \
+    nmap \
+    nikto \
+    gobuster \
+    dirb \
+    curl \
+    git \
+    net-tools \
+    dnsutils \
+    iputils-ping \
+    && apt clean
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+
+COPY . .
+
+CMD python3 -m uvicorn server:app --host 0.0.0.0 --port 8000

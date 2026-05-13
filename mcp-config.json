@@ -1,0 +1,15 @@
+﻿{
+  "mcpServers": {
+    "kali-lab": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "ai-kali-lab-mcp-server-1",
+        "python3",
+        "-c",
+        "import sys; import urllib.request; import json; req=json.loads(sys.stdin.read()); res=urllib.request.urlopen(urllib.request.Request('http://localhost:8000'+req['path'],data=json.dumps(req.get('body',{})).encode(),headers={'Content-Type':'application/json'},method=req.get('method','GET'))); print(res.read().decode())"
+      ]
+    }
+  }
+}
