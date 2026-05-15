@@ -11,3 +11,4 @@ __pycache__/
 
 # Test files
 test_import.py
+headers.txt
