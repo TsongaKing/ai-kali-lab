@@ -1,4 +1,4 @@
-﻿FROM ubuntu:22.04
+﻿FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -19,7 +19,7 @@ RUN apt update && apt install -y \
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt --break-system-packages
 
 COPY . .
 

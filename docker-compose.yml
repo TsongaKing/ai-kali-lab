@@ -18,9 +18,22 @@
         max-file: '3'
 
   dvwa:
-    image: vulnerables/web-dvwa
+    image: ghcr.io/digininja/dvwa:latest
     ports:
       - '8080:80'
+    networks:
+      - lab-network
+    restart: unless-stopped
+    environment:
+      - DB_SERVER=db
+
+  db:
+    image: mariadb:10
+    environment:
+      - MYSQL_ROOT_PASSWORD=dvwa
+      - MYSQL_DATABASE=dvwa
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=p@ssw0rd
     networks:
       - lab-network
     restart: unless-stopped
