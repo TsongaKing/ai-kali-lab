@@ -1,48 +1,22 @@
-﻿# AI Kali Linux MCP Lab
 
-A controlled, isolated security learning environment using Docker and MCP.
+# Systems Development 2B – Security+ Aligned Assessment
 
-## Purpose
-- Learn cybersecurity tools safely
-- Practice against intentionally vulnerable targets
-- Understand AI tool orchestration
-- DevSecOps experimentation
+This repository contains original answers for the **Formative Assessment 1 (HSYD202-1)**.  
+Answers are aligned with the **CompTIA Security+ SY0-701 Student Guide** and enhanced with industry practices.
 
-## Architecture
-AI Assistant -> MCP Server (port 8000) -> Kali Linux Container -> Approved Targets
-                                       -> DVWA (port 8080)
+## Files
+- `SecurityPlus_Assessment_Answers.pdf` – Clean, submission-ready version
+- `SecurityPlus_Assessment_Answers.md` – Source markdown version
 
-## Quick Start
+## Key Topics
+- NIST Cybersecurity Framework (CSF)
+- Threat Analysis and Modelling
+- Attack Vectors (Local and Remote)
+- CIA Triad and Non-Repudiation
+- Cryptography and ROT13 Cipher
+- Software Testing (Grey-box, White-box, Black-box)
+- Incident Response and Business Continuity (COOP vs BC)
+- Biometric Authentication Challenges
 
-### Build and Start Everything
-docker-compose up --build
-
-### Stop Everything
-docker-compose down
-
-### View Logs
-type lab.log
-
-## Approved Targets
-- scanme.nmap.org (Nmap's official test target)
-- localhost
-- 127.0.0.1
-- DVWA at http://localhost:8080
-
-## Safety Rules
-- Never scan targets you do not own or have permission to test
-- All actions are logged to lab.log with timestamps
-- Unauthorized targets are blocked and logged automatically
-- Container is isolated from your main system via lab-network
-
-## Project Structure
-- Dockerfile        -> builds the Kali Linux container
-- server.py         -> MCP server with safety controls
-- docker-compose.yml -> spins up all containers together
-- requirements.txt  -> Python dependencies
-- .env              -> configuration settings
-- lab.log           -> auto-generated activity log
-
-## Legal
-This lab is for educational purposes only.
-Only test against systems you own or have explicit written permission to test.
+## Author
+**Phangasasa Muhlaba** – Aspiring Cloud Security Engineer and DevSecOps Professional
