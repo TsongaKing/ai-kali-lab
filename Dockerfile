@@ -9,6 +9,10 @@ RUN apt update && apt install -y \
     nikto \
     gobuster \
     dirb \
+    sqlmap \
+    hydra \
+    whatweb \
+    wafw00f \
     curl \
     git \
     net-tools \
