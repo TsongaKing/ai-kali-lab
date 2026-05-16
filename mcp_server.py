@@ -8,7 +8,7 @@ ALLOWED_TARGETS = [
     'localhost',
     '127.0.0.1',
     '172.18.0.2',
-    '192.168.68.105'
+    '192.168.68.109'
 ]
 
 mcp = FastMCP('kali-lab')
