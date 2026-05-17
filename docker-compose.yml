@@ -29,8 +29,10 @@
 
   db:
     image: mariadb:10
+    secrets:
+      - db_root_password
     environment:
-      - MYSQL_ROOT_PASSWORD=dvwa
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db_root_password
       - MYSQL_DATABASE=dvwa
       - MYSQL_USER=dvwa
       - MYSQL_PASSWORD=p@ssw0rd
@@ -41,3 +43,7 @@
 networks:
   lab-network:
     driver: bridge
+
+secrets:
+  db_root_password:
+    file: ./db_password.txt

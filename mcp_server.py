@@ -2,6 +2,7 @@
 import asyncio
 import logging
 import datetime
+import urllib.parse
 
 logging.basicConfig(
     filename='/app/lab.log',
@@ -37,11 +38,17 @@ async def run_command(cmd, timeout=45):
     except Exception as e:
         return f'Error: {str(e)}'
 
+def validate_target(target):
+    host = urllib.parse.urlparse(
+        target if target.startswith('http') else f'http://{target}'
+    ).hostname
+    return host if host in ALLOWED_TARGETS else None
+
 @mcp.tool()
 async def nmap_scan(target: str) -> str:
     if target not in ALLOWED_TARGETS:
         return f'Error: Target {target} not allowed'
-    logging.info(f'nmap started on: {target} at {datetime.datetime.now()}')
+    logging.info(f'nmap started on: {target}')
     output = await run_command([
         'nmap', '-F', '--open', '-T4',
         '--max-retries', '1',
@@ -54,7 +61,7 @@ async def nmap_scan(target: str) -> str:
 async def nikto_scan(target: str) -> str:
     if target not in ALLOWED_TARGETS:
         return f'Error: Target {target} not allowed'
-    logging.info(f'nikto started on: {target} at {datetime.datetime.now()}')
+    logging.info(f'nikto started on: {target}')
     output = await run_command([
         'nikto', '-h', target, '-maxtime', '30'
     ])
@@ -65,7 +72,7 @@ async def nikto_scan(target: str) -> str:
 async def dirb_scan(target: str) -> str:
     if target not in ALLOWED_TARGETS:
         return f'Error: Target {target} not allowed'
-    logging.info(f'dirb started on: {target} at {datetime.datetime.now()}')
+    logging.info(f'dirb started on: {target}')
     output = await run_command([
         'dirb', f'http://{target}',
         '/usr/share/dirb/wordlists/common.txt',
@@ -76,22 +83,24 @@ async def dirb_scan(target: str) -> str:
 
 @mcp.tool()
 async def sqlmap_scan(target: str) -> str:
-    if target not in ALLOWED_TARGETS:
-        return f'Error: Target {target} not allowed'
-    logging.info(f'sqlmap started on: {target} at {datetime.datetime.now()}')
+    host = validate_target(target)
+    if not host:
+        return f'Error: Target not allowed'
+    url = target if target.startswith('http') else f'http://{target}'
+    logging.info(f'sqlmap started on: {url}')
     output = await run_command([
-        'sqlmap', '-u', f'http://{target}',
+        'sqlmap', '-u', url,
         '--batch', '--level', '1', '--risk', '1',
         '--timeout', '10', '--retries', '1'
     ], timeout=60)
-    logging.info(f'sqlmap completed on: {target}')
+    logging.info(f'sqlmap completed on: {url}')
     return output
 
 @mcp.tool()
 async def whatweb_scan(target: str) -> str:
     if target not in ALLOWED_TARGETS:
         return f'Error: Target {target} not allowed'
-    logging.info(f'whatweb started on: {target} at {datetime.datetime.now()}')
+    logging.info(f'whatweb started on: {target}')
     output = await run_command([
         'whatweb', '--no-errors', '-a', '1',
         f'http://{target}'
@@ -103,7 +112,7 @@ async def whatweb_scan(target: str) -> str:
 async def wafw00f_scan(target: str) -> str:
     if target not in ALLOWED_TARGETS:
         return f'Error: Target {target} not allowed'
-    logging.info(f'wafw00f started on: {target} at {datetime.datetime.now()}')
+    logging.info(f'wafw00f started on: {target}')
     output = await run_command([
         'wafw00f', f'http://{target}'
     ])
@@ -117,7 +126,7 @@ async def hydra_bruteforce(target: str, service: str) -> str:
     allowed_services = ['ssh', 'ftp', 'http-get']
     if service not in allowed_services:
         return f'Error: Service {service} not allowed. Use: ssh, ftp, http-get'
-    logging.info(f'hydra started on: {target} service: {service} at {datetime.datetime.now()}')
+    logging.info(f'hydra started on: {target} service: {service}')
     output = await run_command([
         'hydra', '-l', 'admin',
         '-P', '/usr/share/dirb/wordlists/common.txt',
