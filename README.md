@@ -1,4 +1,5 @@
 ﻿# AI-Powered Security Lab - MCP + Docker + Ubuntu
+![CI - Security Lab](https://github.com/TsongaKing/ai-kali-lab/actions/workflows/ci.yml/badge.svg)
 
 A professional, containerised security lab that connects Claude AI to real security tools via the Model Context Protocol (MCP). Built for ethical hacking practice, DevSecOps learning, and security automation research.
 
