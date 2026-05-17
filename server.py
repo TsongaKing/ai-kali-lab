@@ -4,7 +4,6 @@ import subprocess
 import logging
 import datetime
 
-# Logging setup - records everything that happens
 logging.basicConfig(
     filename='lab.log',
     level=logging.INFO,
@@ -13,32 +12,35 @@ logging.basicConfig(
 
 app = FastAPI()
 
-# Only these targets are allowed - no arbitrary scanning
 ALLOWED_TARGETS = [
     'scanme.nmap.org',
     'localhost',
-    '127.0.0.1',
-    'dvwa'
+    '127.0.0.1'
 ]
+
 
 class ScanRequest(BaseModel):
     target: str
 
+
 class NiktoRequest(BaseModel):
     target: str
 
+
 class GobusterRequest(BaseModel):
     target: str
+
 
 @app.get('/')
 def home():
     logging.info('Health check called')
     return {'status': 'running', 'time': str(datetime.datetime.now())}
 
+
 @app.post('/scan')
 def scan(req: ScanRequest):
     if req.target not in ALLOWED_TARGETS:
-        logging.warning(f'Blocked scan attempt on unauthorized target: {req.target}')
+        logging.warning(f'Blocked scan on unauthorized target: {req.target}')
         raise HTTPException(status_code=403, detail='Target not allowed')
 
     logging.info(f'Nmap scan started on approved target: {req.target}')
@@ -47,7 +49,8 @@ def scan(req: ScanRequest):
         ['nmap', '-F', '--open', req.target],
         capture_output=True,
         text=True,
-        timeout=120
+        timeout=120,
+        stdin=subprocess.DEVNULL
     )
 
     logging.info(f'Nmap scan completed on: {req.target}')
@@ -58,10 +61,11 @@ def scan(req: ScanRequest):
         'timestamp': str(datetime.datetime.now())
     }
 
+
 @app.post('/nikto')
 def nikto(req: NiktoRequest):
     if req.target not in ALLOWED_TARGETS:
-        logging.warning(f'Blocked nikto attempt on unauthorized target: {req.target}')
+        logging.warning(f'Blocked nikto on unauthorized target: {req.target}')
         raise HTTPException(status_code=403, detail='Target not allowed')
 
     logging.info(f'Nikto scan started on approved target: {req.target}')
@@ -70,7 +74,8 @@ def nikto(req: NiktoRequest):
         ['nikto', '-h', req.target, '-maxtime', '60'],
         capture_output=True,
         text=True,
-        timeout=120
+        timeout=120,
+        stdin=subprocess.DEVNULL
     )
 
     logging.info(f'Nikto scan completed on: {req.target}')
@@ -81,27 +86,28 @@ def nikto(req: NiktoRequest):
         'timestamp': str(datetime.datetime.now())
     }
 
+
 @app.post('/gobuster')
 def gobuster(req: GobusterRequest):
     if req.target not in ALLOWED_TARGETS:
-        logging.warning(f'Blocked gobuster attempt on unauthorized target: {req.target}')
+        logging.warning(f'Blocked gobuster on unauthorized target: {req.target}')
         raise HTTPException(status_code=403, detail='Target not allowed')
 
     logging.info(f'Gobuster scan started on approved target: {req.target}')
 
     result = subprocess.run(
-        ['gobuster', 'dir',
-         '-u', f'http://{req.target}',
-         '-w', '/usr/share/wordlists/dirb/common.txt',
-         '--timeout', '10s'],
+        ['dirb', f'http://{req.target}',
+         '/usr/share/dirb/wordlists/common.txt',
+         '-S', '-r'],
         capture_output=True,
         text=True,
-        timeout=120
+        timeout=120,
+        stdin=subprocess.DEVNULL
     )
 
     logging.info(f'Gobuster scan completed on: {req.target}')
     return {
-        'tool': 'gobuster',
+        'tool': 'dirb',
         'target': req.target,
         'output': result.stdout,
         'timestamp': str(datetime.datetime.now())

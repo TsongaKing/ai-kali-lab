@@ -1,7 +1,6 @@
 ﻿from mcp.server.fastmcp import FastMCP
 import asyncio
 import logging
-import datetime
 import urllib.parse
 
 logging.basicConfig(
@@ -19,6 +18,7 @@ ALLOWED_TARGETS = [
 ]
 
 mcp = FastMCP('kali-lab')
+
 
 async def run_command(cmd, timeout=45):
     try:
@@ -38,11 +38,13 @@ async def run_command(cmd, timeout=45):
     except Exception as e:
         return f'Error: {str(e)}'
 
+
 def validate_target(target):
     host = urllib.parse.urlparse(
         target if target.startswith('http') else f'http://{target}'
     ).hostname
     return host if host in ALLOWED_TARGETS else None
+
 
 @mcp.tool()
 async def nmap_scan(target: str) -> str:
@@ -57,6 +59,7 @@ async def nmap_scan(target: str) -> str:
     logging.info(f'nmap completed on: {target}')
     return output
 
+
 @mcp.tool()
 async def nikto_scan(target: str) -> str:
     if target not in ALLOWED_TARGETS:
@@ -67,6 +70,7 @@ async def nikto_scan(target: str) -> str:
     ])
     logging.info(f'nikto completed on: {target}')
     return output
+
 
 @mcp.tool()
 async def dirb_scan(target: str) -> str:
@@ -81,11 +85,12 @@ async def dirb_scan(target: str) -> str:
     logging.info(f'dirb completed on: {target}')
     return output
 
+
 @mcp.tool()
 async def sqlmap_scan(target: str) -> str:
     host = validate_target(target)
     if not host:
-        return f'Error: Target not allowed'
+        return 'Error: Target not allowed'
     url = target if target.startswith('http') else f'http://{target}'
     logging.info(f'sqlmap started on: {url}')
     output = await run_command([
@@ -95,6 +100,7 @@ async def sqlmap_scan(target: str) -> str:
     ], timeout=60)
     logging.info(f'sqlmap completed on: {url}')
     return output
+
 
 @mcp.tool()
 async def whatweb_scan(target: str) -> str:
@@ -108,6 +114,7 @@ async def whatweb_scan(target: str) -> str:
     logging.info(f'whatweb completed on: {target}')
     return output
 
+
 @mcp.tool()
 async def wafw00f_scan(target: str) -> str:
     if target not in ALLOWED_TARGETS:
@@ -118,6 +125,7 @@ async def wafw00f_scan(target: str) -> str:
     ])
     logging.info(f'wafw00f completed on: {target}')
     return output
+
 
 @mcp.tool()
 async def hydra_bruteforce(target: str, service: str) -> str:
@@ -135,6 +143,7 @@ async def hydra_bruteforce(target: str, service: str) -> str:
     ], timeout=60)
     logging.info(f'hydra completed on: {target}')
     return output
+
 
 if __name__ == '__main__':
     mcp.run(transport='stdio')
