@@ -46,7 +46,7 @@ def scan(req: ScanRequest):
     logging.info(f'Nmap scan started on approved target: {req.target}')
 
     result = subprocess.run(
-        ['nmap', '-F', '--open', req.target],
+        ['nmap', '-F', '--open', '--', req.target],
         capture_output=True,
         text=True,
         timeout=120,
@@ -71,7 +71,7 @@ def nikto(req: NiktoRequest):
     logging.info(f'Nikto scan started on approved target: {req.target}')
 
     result = subprocess.run(
-        ['nikto', '-h', req.target, '-maxtime', '60'],
+        ['nikto', '-h', '--', req.target, '-maxtime', '60'],
         capture_output=True,
         text=True,
         timeout=120,
